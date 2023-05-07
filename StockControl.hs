@@ -23,6 +23,12 @@ createStock = ROOTNODE []
 -- FUNCIÓN QUE DEVUELVE EL NÚMERO DE UNIDADES DE UN PRODUCTO EN EL STOCK --
 -- SI NO ESTÁ, DEBERÁ DEVOLVER -1                                        --Tes
 retrieveStock :: Stock         -> String -> Int
+retrieveStock (INFONODE x) [] = x
+retrieveStock (ROOTNODE xs) (y:ys) = foldl (\acc t -> acc + retrieveStock t (y:ys)) 0 xs
+retrieveStock (INNERNODE c xs) (y:ys)
+  | c == y = foldl (\acc t -> acc + retrieveStock t ys) 0 xs
+  | otherwise = 0
+
 
 
 
