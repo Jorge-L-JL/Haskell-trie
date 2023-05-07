@@ -117,7 +117,8 @@ updateStockList ss [] u = ss
 -- FUNCIÓN QUE DEVUELVE UNA LISTA PARES PRODUCTO-EXISTENCIA --
 -- DEL CATÁLOGO QUE COMIENZAN POR LA CADENA PREFIJO p       --
 listStock :: Stock -> String -> [(String,Int)]
-listStock s str = [("AA", 2)]
+
+
 
 -- FUNCIÓN GENÉRICA DE BACKTRACKING --
 bt :: (a -> Bool) -> (a -> [a]) -> a -> [a]
