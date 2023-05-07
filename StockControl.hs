@@ -24,11 +24,33 @@ createStock = ROOTNODE []
 -- SI NO ESTÁ, DEBERÁ DEVOLVER -1                                        --Tes
 retrieveStock :: Stock         -> String -> Int
 retrieveStock (INFONODE x) [] = x
+retrieveStock (INFONODE _) (_:_) = 0
 retrieveStock (ROOTNODE xs) (y:ys) = foldl (\acc t -> acc + retrieveStock t (y:ys)) 0 xs
+retrieveStock (INNERNODE c xs) [] = 0
 retrieveStock (INNERNODE c xs) (y:ys)
   | c == y = foldl (\acc t -> acc + retrieveStock t ys) 0 xs
   | otherwise = 0
 
+
+
+-- ## FUNCIONA 'PLATO DE POSTRE'
+-- retrieveStock (INFONODE x) [] = x
+-- retrieveStock (INFONODE _) (_:_) = 0
+-- retrieveStock (ROOTNODE xs) (y:ys) = foldl (\acc t -> acc + retrieveStock t (y:ys)) 0 xs
+-- retrieveStock (INNERNODE c xs) (y:ys)
+--   | c == y = foldl (\acc t -> acc + retrieveStock t ys) 0 xs
+--   | otherwise = 0
+
+
+
+
+
+
+-- retrieveStock (INFONODE x) [] = x
+-- retrieveStock (ROOTNODE xs) (y:ys) = foldl (\acc t -> acc + retrieveStock t (y:ys)) 0 xs
+-- retrieveStock (INNERNODE c xs) (y:ys)
+--   | c == y = foldl (\acc t -> acc + retrieveStock t ys) 0 xs
+--   | otherwise = 0
 
 
 
