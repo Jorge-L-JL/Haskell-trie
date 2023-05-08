@@ -117,7 +117,24 @@ updateStockList ss [] u = ss
 -- FUNCIÓN QUE DEVUELVE UNA LISTA PARES PRODUCTO-EXISTENCIA --
 -- DEL CATÁLOGO QUE COMIENZAN POR LA CADENA PREFIJO p       --
 listStock :: Stock -> String -> [(String,Int)]
-
+listStock trie prefix = bt isComplete nextNodesValues trie
+  where
+    isComplete (INFONODE n) = True
+    isComplete _ = False
+    
+    nextNodesValues (INNERNODE c children)
+      | null prefix = [(INNERNODE c [child], value) | (child, value) <- childValues]
+      | c == head prefix = [(INNERNODE c' [child], value) | (c', child, value) <- matches]
+      | otherwise = []
+      where childValues = [(child, v) | INFONODE v <- children]
+            matches = [(c', child, v) | (c', child, v) <- zip3 (map nodeChar children) children childValues, c' == head prefix]
+    nextNodesValues (ROOTNODE children) = [(INNERNODE c [child], value) | (c, child, value) <- matches]
+      where childValues = [(child, v) | INFONODE v <- children]
+            matches = [(c', child, v) | (c', child, v) <- zip3 (map nodeChar children) children childValues, c' == head prefix]
+    nextNodesValues _ = []
+    
+    nodeChar (INNERNODE c _) = c
+    nodeChar _ = error "Only INNERNODE has a character"
 
 
 -- FUNCIÓN GENÉRICA DE BACKTRACKING --
