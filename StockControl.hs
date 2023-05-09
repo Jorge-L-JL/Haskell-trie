@@ -128,16 +128,17 @@ bt    eS             c             n
 stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12],INNERNODE 't' [INNERNODE 'e' [INNERNODE 'l' [INNERNODE 'l' [INNERNODE 'a' [INNERNODE ' ' [INNERNODE '1' [INNERNODE 'l' [INFONODE 20]],INNERNODE '2' [INNERNODE 'l' [INFONODE 10]]]]]]]]]],INNERNODE 'p' [INNERNODE 'l' [INNERNODE 'a' [INNERNODE 't' [INNERNODE 'o' [INFONODE 20,INNERNODE ' ' [INNERNODE 'd' [INNERNODE 'e' [INNERNODE ' ' [INNERNODE '2' [INNERNODE ' ' [INNERNODE 'c' [INNERNODE 'o' [INNERNODE 'l' [INNERNODE 'o' [INNERNODE 'r' [INNERNODE 'e' [INNERNODE 's' [INFONODE 100]]]]]]]]],INNERNODE 'p' [INNERNODE 'o' [INNERNODE 's' [INNERNODE 't' [INNERNODE 'r' [INNERNODE 'e' [INFONODE 100]]]]]]]]]]]]]]],INNERNODE 'v' [INNERNODE 'a' [INNERNODE 's' [INNERNODE 'i' [INNERNODE 'j' [INNERNODE 'a' [INFONODE 50]],INNERNODE 't' [INNERNODE 'o' [INFONODE 10]]],INNERNODE 'o' [INFONODE 0]]]],INNERNODE 'f' [INNERNODE 'a' [INNERNODE 'f' [INFONODE 45]]]]
 
 listStock :: Stock -> String -> [(String, Int)]
-listStock (ROOTNODE cs) prefix = concatMap (listStock' prefix "") cs
+listStock (ROOTNODE cs) prefix = filter ((prefix `isPrefixOf`) . fst) $ concatMap (listStock' prefix "") cs
   where
     listStock' :: String -> String -> Stock -> [(String, Int)]
     listStock' prefix prefixSoFar (INFONODE n)
       | prefixSoFar `isPrefixOf` prefix = [(prefixSoFar, n)]
       | otherwise = []
     listStock' prefix prefixSoFar (INNERNODE c cs)
-      | prefixSoFar `isPrefixOf` prefix = concatMap (listStock' prefix (prefixSoFar ++ [c])) cs ++ [(prefixSoFar ++ [c] ++ prefix', n) | (prefix', n) <- listStock (ROOTNODE cs) prefix]
+      | prefixSoFar `isPrefixOf` prefix = concatMap (listStock' prefix (prefixSoFar ++ [c])) cs ++ [(prefixSoFar ++ [c] ++ prefix', n) | (prefix', n) <- listStock (ROOTNODE cs) (drop (length prefixSoFar + 1) prefix)]
       | otherwise = []
     listStock' _ _ _ = []
+
 
 
 
