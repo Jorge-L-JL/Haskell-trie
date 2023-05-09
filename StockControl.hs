@@ -1,5 +1,6 @@
 module StockControl where
 import Data.List
+import Data.Maybe (isJust)
 
 
 data Stock = ROOTNODE [Stock] | INNERNODE Char [Stock] | INFONODE Int
@@ -116,30 +117,44 @@ updateStockList ss [] u = ss
 
 -- FUNCIÓN QUE DEVUELVE UNA LISTA PARES PRODUCTO-EXISTENCIA --
 -- DEL CATÁLOGO QUE COMIENZAN POR LA CADENA PREFIJO p       --
-listStock :: Stock -> String -> [(String,Int)]
-listStock trie prefix = bt isComplete nextNodesValues trie
-  where
-    isComplete (INFONODE n) = True
-    isComplete _ = False
-    
-    nextNodesValues (INNERNODE c children)
-      | null prefix = [(INNERNODE c [child], value) | (child, value) <- childValues]
-      | c == head prefix = [(INNERNODE c' [child], value) | (c', child, value) <- matches]
-      | otherwise = []
-      where childValues = [(child, v) | INFONODE v <- children]
-            matches = [(c', child, v) | (c', child, v) <- zip3 (map nodeChar children) children childValues, c' == head prefix]
-    nextNodesValues (ROOTNODE children) = [(INNERNODE c [child], value) | (c, child, value) <- matches]
-      where childValues = [(child, v) | INFONODE v <- children]
-            matches = [(c', child, v) | (c', child, v) <- zip3 (map nodeChar children) children childValues, c' == head prefix]
-    nextNodesValues _ = []
-    
-    nodeChar (INNERNODE c _) = c
-    nodeChar _ = error "Only INNERNODE has a character"
-
+--listStock :: Stock -> String -> [(String,Int)]
 
 -- FUNCIÓN GENÉRICA DE BACKTRACKING --
 bt :: (a -> Bool) -> (a -> [a]) -> a -> [a]
 bt    eS             c             n
   | eS n      = [n]
   | otherwise = concat (map (bt eS c) (c n))
+
+
+listStock :: Stock -> String -> [(String, Int)]
+listStock (ROOTNODE cs) prefix = concatMap (listStock' prefix) cs
+listStock _ _ = []
+
+listStock' :: String -> Stock -> [(String, Int)]
+listStock' prefix (INFONODE n) = [(prefix, n)]
+listStock' prefix (INNERNODE c cs) = concatMap (listStock' (prefix ++ [c])) cs
+listStock' prefix _ = []
+
+findPrefixNode :: Char -> [Stock] -> Maybe Stock
+findPrefixNode _ [] = Nothing
+findPrefixNode c (c':cs) = case c' of
+  INNERNODE c'' _ | c'' == c -> Just c'
+  _ -> findPrefixNode c cs
+
+getChild :: Stock -> [Stock]
+getChild (ROOTNODE cs) = cs
+getChild (INNERNODE _ cs) = cs
+getChild _ = []
+
+isInfo :: Stock -> Bool
+isInfo (INFONODE _) = True
+isInfo _ = False
+
+listStockPrefix :: Stock -> String -> [(String, Int)]
+listStockPrefix node prefix = case filter isInfo $ bt eS getChild node of
+    [] -> []
+    infos -> concatMap (\(INFONODE n) -> [(prefix, n)]) infos
+  where
+    eS (INFONODE _) = True
+    eS _ = False
 
