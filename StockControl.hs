@@ -1,6 +1,5 @@
 module StockControl where
 import Data.List
-import Data.Maybe (isJust)
 
 
 data Stock = ROOTNODE [Stock] | INNERNODE Char [Stock] | INFONODE Int
@@ -126,35 +125,20 @@ bt    eS             c             n
   | otherwise = concat (map (bt eS c) (c n))
 
 
+stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12],INNERNODE 't' [INNERNODE 'e' [INNERNODE 'l' [INNERNODE 'l' [INNERNODE 'a' [INNERNODE ' ' [INNERNODE '1' [INNERNODE 'l' [INFONODE 20]],INNERNODE '2' [INNERNODE 'l' [INFONODE 10]]]]]]]]]],INNERNODE 'p' [INNERNODE 'l' [INNERNODE 'a' [INNERNODE 't' [INNERNODE 'o' [INFONODE 20,INNERNODE ' ' [INNERNODE 'd' [INNERNODE 'e' [INNERNODE ' ' [INNERNODE '2' [INNERNODE ' ' [INNERNODE 'c' [INNERNODE 'o' [INNERNODE 'l' [INNERNODE 'o' [INNERNODE 'r' [INNERNODE 'e' [INNERNODE 's' [INFONODE 100]]]]]]]]],INNERNODE 'p' [INNERNODE 'o' [INNERNODE 's' [INNERNODE 't' [INNERNODE 'r' [INNERNODE 'e' [INFONODE 100]]]]]]]]]]]]]]],INNERNODE 'v' [INNERNODE 'a' [INNERNODE 's' [INNERNODE 'i' [INNERNODE 'j' [INNERNODE 'a' [INFONODE 50]],INNERNODE 't' [INNERNODE 'o' [INFONODE 10]]],INNERNODE 'o' [INFONODE 0]]]],INNERNODE 'f' [INNERNODE 'a' [INNERNODE 'f' [INFONODE 45]]]]
+
 listStock :: Stock -> String -> [(String, Int)]
 listStock (ROOTNODE cs) prefix = concatMap (listStock' prefix) cs
 listStock _ _ = []
 
 listStock' :: String -> Stock -> [(String, Int)]
-listStock' prefix (INFONODE n) = [(prefix, n)]
-listStock' prefix (INNERNODE c cs) = concatMap (listStock' (prefix ++ [c])) cs
-listStock' prefix _ = []
-
-findPrefixNode :: Char -> [Stock] -> Maybe Stock
-findPrefixNode _ [] = Nothing
-findPrefixNode c (c':cs) = case c' of
-  INNERNODE c'' _ | c'' == c -> Just c'
-  _ -> findPrefixNode c cs
-
-getChild :: Stock -> [Stock]
-getChild (ROOTNODE cs) = cs
-getChild (INNERNODE _ cs) = cs
-getChild _ = []
-
-isInfo :: Stock -> Bool
-isInfo (INFONODE _) = True
-isInfo _ = False
-
-listStockPrefix :: Stock -> String -> [(String, Int)]
-listStockPrefix node prefix = case filter isInfo $ bt eS getChild node of
-    [] -> []
-    infos -> concatMap (\(INFONODE n) -> [(prefix, n)]) infos
+listStock' prefix (INFONODE n)
+  | prefix `isPrefixOf` name = [(name, n)]
+  | otherwise = []
   where
-    eS (INFONODE _) = True
-    eS _ = False
+    name = show n
+listStock' prefix (INNERNODE c cs)
+  | prefix `isPrefixOf` [c] = concatMap (listStock' (prefix ++ [c])) cs
+  | otherwise = []
+listStock' prefix _ = []
 
