@@ -141,3 +141,7 @@ listStock (ROOTNODE cs) prefix = filter ((prefix `isPrefixOf`) . fst) $ concatMa
       | otherwise = []
     listStock' _ _ _ = []
 
+test = do
+  let stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12]]]]
+  let updatedStock = updateStock stock "bol" 24
+  print updatedStock
