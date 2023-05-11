@@ -137,9 +137,10 @@ listStock (ROOTNODE cs) prefix = filter ((prefix `isPrefixOf`) . fst) $ concatMa
       | prefixSoFar `isPrefixOf` prefix = [(prefixSoFar, n)]
       | otherwise = []
     listStock' prefix prefixSoFar (INNERNODE c cs)
-      | prefixSoFar `isPrefixOf` prefix = concatMap (listStock' prefix (prefixSoFar ++ [c])) cs ++ [(prefixSoFar ++ [c] ++ prefix', n) | (prefix', n) <- listStock (ROOTNODE cs) (drop (length prefixSoFar + 1) prefix)]
+      | prefixSoFar `isPrefixOf` prefix = concatMap (listStock' prefix (prefixSoFar ++ [c])) cs ++ [(prefixSoFar ++ [c] ++ prefix', n) | (prefix', n) <- listStock (ROOTNODE cs) (drop (length prefixSoFar) prefix)]
       | otherwise = []
     listStock' _ _ _ = []
+
 
 test = do
   let stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12]]]]
