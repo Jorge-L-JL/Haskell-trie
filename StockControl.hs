@@ -122,6 +122,7 @@ updateStockList ss [] u = ss
 --Se utiliza la función isPrefixOf (nativa de Haskell) de manera infija
 --Se utiliza el operador '.' el cual sirve para realizar una composición de funciones
 --Se utiliza fst, es una función de Haskell que devuelve el primer elemento de un
+--Se utiliza el operador $ para permitir que el lado derecho de $ se evalúe completamente antes de aplicar la función del lado izquierdo.
 listStock :: Stock -> String -> [(String, Int)]
 listStock (ROOTNODE cs) prefix = filter ((prefix `isPrefixOf`) . fst) $ concatMap (listStock' prefix "") cs
   where
