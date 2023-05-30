@@ -105,12 +105,11 @@ updateStock (ROOTNODE ss) (p:ps) u = ROOTNODE (updateStockList ss (p:ps) u)
 updateStockList :: [Stock] -> String -> Int -> [Stock]
 updateStockList [] [] u = [INFONODE u]
 updateStockList [] (p:ps) u = [INNERNODE p (updateStockList [] ps u)]
-updateStockList (s@(INFONODE _):ss) [] u = INFONODE u : ss
+updateStockList (s@(INFONODE _):ss) [] u = INFONODE u : ss --Ponemos en práctica el operador @ para vincular el argumento con un nombre, en este caso 's'
 updateStockList (s@(INNERNODE c ss'):ss) (p:ps) u =
   if c == p then INNERNODE c (updateStockList ss' ps u) : ss
   else s : updateStockList ss (p:ps) u
 updateStockList ss [] u = ss
-
 
 -----------------------
 -- FUNCIÓN LISTSTOCK --
@@ -120,15 +119,9 @@ updateStockList ss [] u = ss
 -- DEL CATÁLOGO QUE COMIENZAN POR LA CADENA PREFIJO p       --
 --listStock :: Stock -> String -> [(String,Int)]
 
--- FUNCIÓN GENÉRICA DE BACKTRACKING --
-bt :: (a -> Bool) -> (a -> [a]) -> a -> [a]
-bt    eS             c             n
-  | eS n      = [n]
-  | otherwise = concat (map (bt eS c) (c n))
-
-
-stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12],INNERNODE 't' [INNERNODE 'e' [INNERNODE 'l' [INNERNODE 'l' [INNERNODE 'a' [INNERNODE ' ' [INNERNODE '1' [INNERNODE 'l' [INFONODE 20]],INNERNODE '2' [INNERNODE 'l' [INFONODE 10]]]]]]]]]],INNERNODE 'p' [INNERNODE 'l' [INNERNODE 'a' [INNERNODE 't' [INNERNODE 'o' [INFONODE 20,INNERNODE ' ' [INNERNODE 'd' [INNERNODE 'e' [INNERNODE ' ' [INNERNODE '2' [INNERNODE ' ' [INNERNODE 'c' [INNERNODE 'o' [INNERNODE 'l' [INNERNODE 'o' [INNERNODE 'r' [INNERNODE 'e' [INNERNODE 's' [INFONODE 100]]]]]]]]],INNERNODE 'p' [INNERNODE 'o' [INNERNODE 's' [INNERNODE 't' [INNERNODE 'r' [INNERNODE 'e' [INFONODE 100]]]]]]]]]]]]]]],INNERNODE 'v' [INNERNODE 'a' [INNERNODE 's' [INNERNODE 'i' [INNERNODE 'j' [INNERNODE 'a' [INFONODE 50]],INNERNODE 't' [INNERNODE 'o' [INFONODE 10]]],INNERNODE 'o' [INFONODE 0]]]]]
-
+--Se utiliza la función isPrefixOf (nativa de Haskell) de manera infija
+--Se utiliza el operador '.' el cual sirve para realizar una composición de funciones
+--Se utiliza fst, es una función de Haskell que devuelve el primer elemento de un
 listStock :: Stock -> String -> [(String, Int)]
 listStock (ROOTNODE cs) prefix = filter ((prefix `isPrefixOf`) . fst) $ concatMap (listStock' prefix "") cs
   where
@@ -142,6 +135,15 @@ listStock (ROOTNODE cs) prefix = filter ((prefix `isPrefixOf`) . fst) $ concatMa
     listStock' _ _ _ = []
 
 
+-- FUNCIÓN GENÉRICA DE BACKTRACKING --
+bt :: (a -> Bool) -> (a -> [a]) -> a -> [a]
+bt    eS             c             n
+  | eS n      = [n]
+  | otherwise = concat (map (bt eS c) (c n))
+
+
+stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12],INNERNODE 't' [INNERNODE 'e' [INNERNODE 'l' [INNERNODE 'l' [INNERNODE 'a' [INNERNODE ' ' [INNERNODE '1' [INNERNODE 'l' [INFONODE 20]],INNERNODE '2' [INNERNODE 'l' [INFONODE 10]]]]]]]]]],INNERNODE 'p' [INNERNODE 'l' [INNERNODE 'a' [INNERNODE 't' [INNERNODE 'o' [INFONODE 20,INNERNODE ' ' [INNERNODE 'd' [INNERNODE 'e' [INNERNODE ' ' [INNERNODE '2' [INNERNODE ' ' [INNERNODE 'c' [INNERNODE 'o' [INNERNODE 'l' [INNERNODE 'o' [INNERNODE 'r' [INNERNODE 'e' [INNERNODE 's' [INFONODE 100]]]]]]]]],INNERNODE 'p' [INNERNODE 'o' [INNERNODE 's' [INNERNODE 't' [INNERNODE 'r' [INNERNODE 'e' [INFONODE 100]]]]]]]]]]]]]]],INNERNODE 'v' [INNERNODE 'a' [INNERNODE 's' [INNERNODE 'i' [INNERNODE 'j' [INNERNODE 'a' [INFONODE 50]],INNERNODE 't' [INNERNODE 'o' [INFONODE 10]]],INNERNODE 'o' [INFONODE 0]]]]]
+--Testing
 test = do
   let stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12]]]]
   let updatedStock = updateStock stock "bol" 24
