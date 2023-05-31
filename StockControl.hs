@@ -20,8 +20,7 @@ createStock = ROOTNODE []
 -- FUNCIÓN RETRIEVESTOCK --
 ---------------------------
 
--- FUNCIÓN QUE DEVUELVE EL NÚMERO DE UNIDADES DE UN PRODUCTO EN EL STOCK --
--- SI NO ESTÁ, DEBERÁ DEVOLVER -1                                       
+-- FUNCIÓN QUE DEVUELVE EL NÚMERO DE UNIDADES DE UN PRODUCTO EN EL STOCK --                                     
 retrieveStock :: Stock         -> String -> Int
 retrieveStock (INFONODE x) [] = x
 retrieveStock (INFONODE _) (_:_) = 0
