@@ -31,60 +31,6 @@ retrieveStock (INNERNODE c xs) (y:ys)
   | c == y = foldl (\acc t -> acc + retrieveStock t ys) 0 xs
   | otherwise = 0
 
-
-
--- ## FUNCIONA 'PLATO DE POSTRE'
--- retrieveStock (INFONODE x) [] = x
--- retrieveStock (INFONODE _) (_:_) = 0
--- retrieveStock (ROOTNODE xs) (y:ys) = foldl (\acc t -> acc + retrieveStock t (y:ys)) 0 xs
--- retrieveStock (INNERNODE c xs) (y:ys)
---   | c == y = foldl (\acc t -> acc + retrieveStock t ys) 0 xs
---   | otherwise = 0
-
-
-
-
-
-
--- retrieveStock (INFONODE x) [] = x
--- retrieveStock (ROOTNODE xs) (y:ys) = foldl (\acc t -> acc + retrieveStock t (y:ys)) 0 xs
--- retrieveStock (INNERNODE c xs) (y:ys)
---   | c == y = foldl (\acc t -> acc + retrieveStock t ys) 0 xs
---   | otherwise = 0
-
-
-
-
-
-
-
-
-
-
-
-
--- retrieveStock (INFONODE n) _ = n
--- retrieveStock (ROOTNODE stocks) product = sum $ map (\s -> retrieveStock s product) stocks
--- retrieveStock (INNERNODE c stocks) product = case product of
---                                                 [] -> -1 -- Si el String está vacío, el producto no existe
---                                                 (p:ps) -> if c == p
---                                                              then retrieveStock (head stocks) ps
---                                                              else retrieveStock (ROOTNODE (tail stocks)) product
--- retrieveStock _ _ = -1
-
-
-
-
--- retrieveStock (INFONODE n) _ = n -- si el nodo es una hoja con información, devolvemos su valor
--- retrieveStock (ROOTNODE stocks) product = sum $ map (\s -> retrieveStock s product) stocks -- si es un nodo raíz, buscamos en todos los nodos hijos
--- retrieveStock (INNERNODE c stocks) product = if c == head product 
---                                                then retrieveStock (head stocks) (tail product) 
---                                                else retrieveStock (ROOTNODE (tail stocks)) product -- si coincide la letra, buscamos en el primer hijo, si no, en el resto de hijos
--- retrieveStock _ _ = -1 -- si no encontramos el producto, devolvemos -1
-
-
-
-
 -------------------------
 -- FUNCIÓN UPDATESTOCK --
 -------------------------
@@ -148,4 +94,6 @@ stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12],INNE
 test = do
   let stock = ROOTNODE [INNERNODE 'b' [INNERNODE 'o' [INNERNODE 'l' [INFONODE 12]]]]
   let updatedStock = updateStock stock "bol" 24
+  let listedItems = listStock stock "b"
   print updatedStock
+  print listedItems
