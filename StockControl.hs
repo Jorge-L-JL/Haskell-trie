@@ -13,8 +13,7 @@ data Stock = ROOTNODE [Stock] | INNERNODE Char [Stock] | INFONODE Int
 -- FUNCIÓN QUE DEVUELVE UN STOCK VACÍO --
 createStock :: Stock
 createStock = ROOTNODE []
---Stoc tendrá la estructure -> ROOTNODE [INNERNODE 'a' [INFONODE 2]] 
--- A = 12
+
 
 ---------------------------
 -- FUNCIÓN RETRIEVESTOCK --
@@ -37,7 +36,6 @@ retrieveStock (INNERNODE c xs) (y:ys)
 -- FUNCIÓN QUE MODIFICA EL VALOR ASOCIADO A UN PRODUCTO EN EL STOCK --
 -- SÓLO PUEDE ALMACENAR NÚMEROS MAYORES O IGUALES A 0               --
 --
--- la función verifica si el nodo actual es una hoja o interno y la clave es vacía o no
 
 --
 updateStock :: Stock         -> String -> Int -> Stock
