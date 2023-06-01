@@ -1,5 +1,8 @@
 module StockControl where
 import Data.List
+import Data.Maybe
+import Data.List (sort)
+
 
 
 data Stock = ROOTNODE [Stock] | INNERNODE Char [Stock] | INFONODE Int
@@ -19,15 +22,36 @@ createStock = ROOTNODE []
 -- FUNCIÓN RETRIEVESTOCK --
 ---------------------------
 
--- FUNCIÓN QUE DEVUELVE EL NÚMERO DE UNIDADES DE UN PRODUCTO EN EL STOCK --                                     
-retrieveStock :: Stock         -> String -> Int
-retrieveStock (INFONODE x) [] = x
-retrieveStock (INFONODE _) (_:_) = 0
-retrieveStock (ROOTNODE xs) (y:ys) = foldl (\acc t -> acc + retrieveStock t (y:ys)) 0 xs
-retrieveStock (INNERNODE c xs) [] = 0
-retrieveStock (INNERNODE c xs) (y:ys)
-  | c == y = foldl (\acc t -> acc + retrieveStock t ys) 0 xs
-  | otherwise = 0
+-- FUNCIÓN QUE DEVUELVE EL NÚMERO DE UNIDADES DE UN PRODUCTO EN EL STOCK --
+-- Si el resultado es Just x, se ejecuta la acción x (en este caso es retornar el valor x), 
+-- si se encuentra la cadena en el trie, la función retrieveStock retornará el valor entero asociado.
+retrieveStock :: Stock -> String -> Int
+retrieveStock stock str = case searchTrie stock str of
+  Just x -> x
+  Nothing -> -1
+
+-- Se utiliza Maybe por la sentencia case enla que utilizamos el Just y Nothing
+-- El tipo Maybe en Haskell es una forma de representar la posibilidad de que un valor pueda estar presente o ausente.
+-- Si el resultado es Nothing, se devuelve -1, significando que la cadena no se encuentra en el trie
+searchTrie :: Stock -> String -> Maybe Int 
+searchTrie stock str = case str of
+  [] -> getInfo stock
+  (c:cs) -> case stock of
+    ROOTNODE xs -> searchInNodes xs str
+    INNERNODE ch xs -> if ch == c then searchInNodes xs cs else Nothing
+    INFONODE _ -> Nothing
+
+searchInNodes :: [Stock] -> String -> Maybe Int
+searchInNodes [] _ = Nothing
+searchInNodes (node:nodes) str = case searchTrie node str of
+  Just x -> Just x
+  Nothing -> searchInNodes nodes str
+
+getInfo :: Stock -> Maybe Int
+getInfo stock = case stock of
+  INFONODE x -> Just x
+  _ -> Nothing
+
 
 -------------------------
 -- FUNCIÓN UPDATESTOCK --
@@ -66,8 +90,9 @@ updateStockList ss [] u = ss
 --Se utiliza el operador '.' el cual sirve para realizar una composición de funciones
 --Se utiliza fst, es una función de Haskell que devuelve el primer elemento de un
 --Se utiliza el operador $ para permitir que el lado derecho de $ se evalúe completamente antes de aplicar la función del lado izquierdo.
+--Se utiliza la función Sort para devolver los resultado ordenados
 listStock :: Stock -> String -> [(String, Int)]
-listStock (ROOTNODE cs) prefix = filter ((prefix `isPrefixOf`) . fst) $ concatMap (listStock' prefix "") cs
+listStock (ROOTNODE cs) prefix = sort $ filter ((prefix `isPrefixOf`) . fst) $ concatMap (listStock' prefix "") cs
   where
     listStock' :: String -> String -> Stock -> [(String, Int)]
     listStock' prefix prefixSoFar (INFONODE n)
