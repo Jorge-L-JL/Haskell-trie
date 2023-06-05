@@ -72,11 +72,12 @@ updateStock (ROOTNODE ss) (p:ps) u = ROOTNODE (updateStockList ss (p:ps) u)
 updateStockList :: [Stock] -> String -> Int -> [Stock]
 updateStockList [] [] u = [INFONODE u]
 updateStockList [] (p:ps) u = [INNERNODE p (updateStockList [] ps u)]
-updateStockList (s@(INFONODE _):ss) [] u = INFONODE u : ss --Ponemos en práctica el operador @ para vincular el argumento con un nombre, en este caso 's'
+updateStockList (s@(INFONODE _):ss) [] u = INFONODE u : ss  --Ponemos en práctica el operador @ para vincular el argumento con un nombre, en este caso 's'
+updateStockList (s@(INNERNODE c ss'):ss) [] u = s : updateStockList ss [] u
+updateStockList (s@(INFONODE _):ss) (p:ps) u = s : updateStockList ss (p:ps) u
 updateStockList (s@(INNERNODE c ss'):ss) (p:ps) u =
   if c == p then INNERNODE c (updateStockList ss' ps u) : ss
   else s : updateStockList ss (p:ps) u
-updateStockList ss [] u = ss
 
 -----------------------
 -- FUNCIÓN LISTSTOCK --
